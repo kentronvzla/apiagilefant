@@ -4,20 +4,20 @@ class TareaPersonaKhronos extends OracleBaseModel {
 
     public $timestamps = false;
     protected $table = "TAREAS_PERSONA";
-    protected $primaryKey = "IDTAREA";
+    protected $primaryKey = "idtarea";
     protected $sequence = "SQ_IDTAREA";
     protected $rules = array(
-        'IDTAREA' => 'integer',
-        'CIPERS' => 'required',
-        'FECTAREA' => 'required',
-        'ANO' => 'required|integer',
-        'SEMANA' => 'required|integer',
-        'DESCTAREA' => 'required|max:80',
-        'TIEMPO' => 'required',
-        'CODTAREA' => 'required',
-        'IDACT' => 'required',
-        'IDOT' => 'required',
-        'TBRUTO' => 'required',
+        'idtarea' => 'integer',
+        'cipers' => 'required',
+        'fectarea' => 'required',
+        'ano' => 'required|integer',
+        'semana' => 'required|integer',
+        'desctarea' => 'required|max:80',
+        'tiempo' => 'required',
+        'codtarea' => 'required',
+        'idact' => 'required',
+        'idot' => 'required',
+        'tbruto' => 'required',
     );
 
     public static function crear(HourEntry $trabajo) {
@@ -53,22 +53,22 @@ class TareaPersonaKhronos extends OracleBaseModel {
     public function validate() {
         if (parent::validate()) {
             //existe la cedula?.
-            $count = DB::connection('oracle')->table('PERSONAS')->where('CIPERS', '=', $this->CIPERS)->count();
+            $count = DB::connection('oracle')->table('PERSONAS')->where('CIPERS', '=', $this->cipers)->count();
             if ($count == 0) {
                 $this->errors->add('CIPERS', 'La cedula no esta registrada en khronos.');
             }
             //existe la tarea?.
-            $count = DB::connection('oracle')->table('TAREAS')->where('CODTAREA', '=', $this->CODTAREA)->count();
+            $count = DB::connection('oracle')->table('TAREAS')->where('CODTAREA', '=', $this->codtarea)->count();
             if ($count == 0) {
                 $this->errors->add('CODTAREA', 'La tarea no esta registrada en khronos.');
             }
             //existe la tarea?.
-            $count = DB::connection('oracle')->table('ACTS_OT')->where('IDACT', '=', $this->IDACT)->count();
+            $count = DB::connection('oracle')->table('ACTS_OT')->where('IDACT', '=', $this->idact)->count();
             if ($count == 0) {
                 $this->errors->add('IDACT', 'La actividad no esta registrada en khronos.');
             }
             //existe la ot?.
-            $count = DB::connection('oracle')->table('ORDENES_TRABAJO')->where('IDOT', '=', $this->IDOT)->count();
+            $count = DB::connection('oracle')->table('ORDENES_TRABAJO')->where('IDOT', '=', $this->idot)->count();
             if ($count == 0) {
                 $this->errors->add('IDOT', 'La ot no esta registrada en khronos.');
             }
@@ -80,13 +80,12 @@ class TareaPersonaKhronos extends OracleBaseModel {
         return false;
     }
 
-    public function actualizar(){
-        $trabajo = $this->hourEntry;
+    public function actualizar($trabajo){
         $fecTarea = new Carbon($trabajo->date);
-        $this->FECTAREA = $fecTarea->format('Y-m-d');
-        $this->ANO = $fecTarea->format('Y');
-        $this->SEMANA = (int)$fecTarea->format('W');
-        $this->DESCTAREA = $trabajo->description;
+        $this->fectarea = $fecTarea->format('Y-m-d');
+        $this->ano = $fecTarea->format('Y');
+        $this->semana = (int)$fecTarea->format('W');
+        $this->desctarea = $trabajo->description;
         $horas = floor($trabajo->minutesSpent / 60);
         if ($horas < 10) {
             $horas = "0" . $horas;
@@ -95,11 +94,11 @@ class TareaPersonaKhronos extends OracleBaseModel {
         if ($minutos < 10) {
             $minutos = "0" . $minutos;
         }
-        $this->TIEMPO = $horas . ':' . $minutos;
-        $this->TBRUTO = 0;
+        $this->tiempo = $horas . ':' . $minutos;
+        $this->tbruto = 0;
         if ($this->save()) {
-            $trabajo->MODIFICADA = false;
-            $trabajo->SINCRONIZADA = true;
+            $trabajo->MODIFICADA = 0;
+            $trabajo->SINCRONIZADA = 1;
             $trabajo->save();
             return true;
         }
