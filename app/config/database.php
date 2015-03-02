@@ -40,11 +40,6 @@ return array(
       |
      */
     'connections' => array(
-        'sqlite' => array(
-            'driver' => 'sqlite',
-            'database' => __DIR__ . '/../database/production.sqlite',
-            'prefix' => '',
-        ),
         'mysql' => array(
             'driver' => 'mysql',
             'host' => 'appwebdesa.kentron.com.ve',
@@ -53,24 +48,6 @@ return array(
             'password' => 'agilefant',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-        ),
-        'pgsql' => array(
-            'driver' => 'pgsql',
-            'host' => '10.0.0.194',
-            'database' => 'ayc',
-            'username' => 'ayc',
-            'password' => 'ayc',
-            'charset' => 'utf8',
-            'prefix' => '',
-            'schema' => 'public',
-        ),
-        'sqlsrv' => array(
-            'driver' => 'sqlsrv',
-            'host' => 'servidor-sql',
-            'database' => 'apiagilefant',
-            'username' => 'sa',
-            'password' => '123.abc',
             'prefix' => '',
         ),
         'oracle' => array(
