@@ -197,35 +197,9 @@ abstract class BaseModel extends Eloquent {
     /**
      * Validates current attributes against rules
      */
-    public function validate($model = null) {
-        if (isset($this->attributes['created_at'])) {
-            $objAux = static::find($this->attributes[$this->primaryKey]);
-            if (is_object($objAux)) {
-                foreach ($this->rules as $key => $rule) {
-                    if (strpos($rule, 'unique:') !== false) {
-                        $rulesCol = explode('|', $rule);
-                        foreach ($rulesCol as $key2 => $val) {
-                            if (starts_with($rulesCol[$key2], 'unique:')) {
-                                $rulesCol[$key2].=',' . $objAux->{$this->primaryKey} . ',' . $this->primaryKey;
-                            }
-                        }
-                        $this->rules[$key] = implode('|', $rulesCol);
-                    }
-                }
-            }
-        }
+    public function validate() {
         $v = $this->validator->make($this->attributes, $this->rules);
-        if (!is_null($this->getPrettyFields())) {
-            $v->setAttributeNames($this->getPrettyFields());
-        }
         if ($v->passes()) {
-            if (isset($objAux) && Input::has('version')) {
-                if (Input::get('version') != $this->attributes['version']) {
-                    $this->errors->add('ErrorVersión', 'Un usuario ya actualizó este registro, no se pueden guardar los cambios. <a onClick="window.location.reload()">Haga click aqui para recargar la página</a>');
-                    return false;
-                }
-                $this->attributes['version'] ++;
-            }
             return true;
         }
         $this->setErrors($v->messages());
@@ -235,7 +209,7 @@ abstract class BaseModel extends Eloquent {
     public function getParsedErrors() {
         $retorno = "";
         foreach ($this->errors->all() as $error) {
-            $retorno .= $error . "\n";
+            $retorno .= $error . "<br>";
         }
         return $retorno;
     }
@@ -254,8 +228,4 @@ abstract class BaseModel extends Eloquent {
     public function hasErrors() {
         return $this->errors->count() > 0;
     }
-
-    protected abstract function getPrettyName();
-
-    protected abstract function getPrettyFields();
 }

@@ -18,12 +18,7 @@ class HourEntry extends BaseModel {
         return $this->belongsTo('User', 'user_id');
     }
 
-    protected function getPrettyFields() {
-        
+    public function khronos(){
+        return $this->belongsTo('TareaPersonaKhronos', 'IDKHRONOS');
     }
-
-    protected function getPrettyName() {
-        
-    }
-
 }

@@ -30,13 +30,4 @@ class Story extends BaseModel {
     public function backlog() {
         return $this->belongsTo('Backlog', 'backlog_id');
     }
-
-    protected function getPrettyFields() {
-        
-    }
-
-    protected function getPrettyName() {
-        
-    }
-
 }

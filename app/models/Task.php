@@ -9,13 +9,4 @@ class Task extends BaseModel {
     public function story() {
         return $this->belongsTo('Story', 'story_id');
     }
-
-    protected function getPrettyFields() {
-        
-    }
-
-    protected function getPrettyName() {
-        
-    }
-
 }

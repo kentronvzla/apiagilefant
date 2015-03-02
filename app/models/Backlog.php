@@ -14,13 +14,4 @@ class Backlog extends BaseModel {
         }
         return false;
     }
-
-    protected function getPrettyFields() {
-        
-    }
-
-    protected function getPrettyName() {
-        
-    }
-
 }

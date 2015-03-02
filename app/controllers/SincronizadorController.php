@@ -62,6 +62,16 @@ class SincronizadorController extends BaseController {
                 }
             }
         }
+
+        //Actualizamos las horas que cambiaron.
+        $modificados = HourEntry::where('SINCRONIZADA', '=', 1)->where('MODIFICADA','=',1)->where('user_id', '=', $id)->get();
+        foreach($modificados as $trabajo){
+            $guardo = $trabajo->khronos->actualizar();
+            if($guardo===false){
+                dd($trabajo->khronos->getParsedErrors());
+            }
+            $data['infokhronos'][] ="Se actualizó la tarea: ".$trabajo->id;
+        }
         return View::make('index', $data);
     }
 

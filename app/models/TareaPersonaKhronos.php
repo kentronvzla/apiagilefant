@@ -42,8 +42,6 @@ class TareaPersonaKhronos extends OracleBaseModel {
         $tareaKhronos->IDOT = $trabajo->task->story->backlog->OT;
         $tareaKhronos->TBRUTO = 0;
         if ($tareaKhronos->validate()) {
-            //con la actualizacion de yajra/oci8 se maneja la sequencia desde el modelo.
-            //$tareaKhronos->IDTAREA = DB::connection('oracle')->nextSequenceValue('SQ_IDTAREA');
             $tareaKhronos->save();
             $trabajo->IDKHRONOS = $tareaKhronos->IDTAREA;
             $trabajo->SINCRONIZADA = true;
@@ -52,8 +50,8 @@ class TareaPersonaKhronos extends OracleBaseModel {
         return $tareaKhronos;
     }
 
-    public function validate($model = null) {
-        if (parent::validate($model)) {
+    public function validate() {
+        if (parent::validate()) {
             //existe la cedula?.
             $count = DB::connection('oracle')->table('PERSONAS')->where('CIPERS', '=', $this->CIPERS)->count();
             if ($count == 0) {
@@ -82,11 +80,33 @@ class TareaPersonaKhronos extends OracleBaseModel {
         return false;
     }
 
-    protected function getPrettyFields() {
-        
+    public function actualizar(){
+        $trabajo = $this->hourEntry;
+        $fecTarea = new Carbon($trabajo->date);
+        $this->FECTAREA = $fecTarea->format('Y-m-d');
+        $this->ANO = $fecTarea->format('Y');
+        $this->SEMANA = (int)$fecTarea->format('W');
+        $this->DESCTAREA = $trabajo->description;
+        $horas = floor($trabajo->minutesSpent / 60);
+        if ($horas < 10) {
+            $horas = "0" . $horas;
+        }
+        $minutos = $trabajo->minutesSpent % 60;
+        if ($minutos < 10) {
+            $minutos = "0" . $minutos;
+        }
+        $this->TIEMPO = $horas . ':' . $minutos;
+        $this->TBRUTO = 0;
+        if ($this->save()) {
+            $trabajo->MODIFICADA = false;
+            $trabajo->SINCRONIZADA = true;
+            $trabajo->save();
+            return true;
+        }
+        return false;
     }
 
-    protected function getPrettyName() {
-        
+    public function hourEntry(){
+        return $this->hasOne('HourEntry','IDKHRONOS');
     }
 }
