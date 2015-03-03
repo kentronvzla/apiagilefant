@@ -23,11 +23,11 @@ class TareaPersonaKhronos extends OracleBaseModel {
     public static function crear(HourEntry $trabajo) {
         $tareaKhronos = new TareaPersonaKhronos();
         $fecTarea = new Carbon($trabajo->date);
-        $tareaKhronos->CIPERS = $trabajo->user->cedula;
-        $tareaKhronos->FECTAREA = $fecTarea->format('Y-m-d');
-        $tareaKhronos->ANO = $fecTarea->format('Y');
-        $tareaKhronos->SEMANA = (int)$fecTarea->format('W');
-        $tareaKhronos->DESCTAREA = $trabajo->description;
+        $tareaKhronos->cipers = $trabajo->user->cedula;
+        $tareaKhronos->fectarea = $fecTarea->format('Y-m-d');
+        $tareaKhronos->ano = $fecTarea->format('Y');
+        $tareaKhronos->semana = (int)$fecTarea->format('W');
+        $tareaKhronos->desctarea = $trabajo->description;
         $horas = floor($trabajo->minutesSpent / 60);
         if ($horas < 10) {
             $horas = "0" . $horas;
@@ -36,14 +36,14 @@ class TareaPersonaKhronos extends OracleBaseModel {
         if ($minutos < 10) {
             $minutos = "0" . $minutos;
         }
-        $tareaKhronos->TIEMPO = $horas . ':' . $minutos;
-        $tareaKhronos->CODTAREA = $trabajo->task->story->TAREA;
-        $tareaKhronos->IDACT = $trabajo->task->story->ACTIVIDAD;
-        $tareaKhronos->IDOT = $trabajo->task->story->backlog->OT;
-        $tareaKhronos->TBRUTO = 0;
+        $tareaKhronos->tiempo = $horas . ':' . $minutos;
+        $tareaKhronos->codtarea = $trabajo->task->story->TAREA;
+        $tareaKhronos->idact = $trabajo->task->story->ACTIVIDAD;
+        $tareaKhronos->idot = $trabajo->task->story->backlog->OT;
+        $tareaKhronos->tbruto = 0;
         if ($tareaKhronos->validate()) {
             $tareaKhronos->save();
-            $trabajo->IDKHRONOS = $tareaKhronos->IDTAREA;
+            $trabajo->IDKHRONOS = $tareaKhronos->idtarea;
             $trabajo->SINCRONIZADA = true;
             $trabajo->save();
         }
